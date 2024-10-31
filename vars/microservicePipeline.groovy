@@ -1,7 +1,7 @@
-// vars/microservicePipeline.groovy
+// microservice-jenkins-shared-lib/vars/microservicePipeline.groovy
 
 def call(String branch, String gitUrl, String imageName, String containerName, String portMapping) {
-    // Define the stages directly without an enclosing pipeline block
+    // Directly define the stages without wrapping them in a pipeline block
     stages {
         stage('Checkout from Git') {
             steps {
