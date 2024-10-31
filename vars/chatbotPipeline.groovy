@@ -1,49 +1,25 @@
+// vars/chatbotPipeline.groovy
 def call() {
-    stages {
-        stage('Checkout from Git') {
-            steps {
-                script {
-                    checkoutFromGit()
-                }
-            }
-        }
-        stage("Docker Build") {
-            steps {
-                script {
-                    buildDockerImage()
-                }
-            }
-        }
-        stage("Remove Container") {
-            steps {
-                script {
-                    removeContainer()
-                }
-            }
-        }
-        stage('Deploy to Container') {
-            steps {
-                script {
-                    deployToContainer()
-                }
-            }
-        }
-    }
+    // Placeholder to avoid calling this method directly in the pipeline
 }
 
 def checkoutFromGit() {
-    git branch: 'legacy', url: 'https://github.com/Aj7Ay/chatbot-ui.git'
+    // Checkout from Git repository
+    git branch: 'legacy', url: 'https://github.com/RaamHorakeri/chatbot-ui.git'
 }
 
 def buildDockerImage() {
+    // Build the Docker image
     sh "docker build -t chatbot:latest ."
 }
 
 def removeContainer() {
+    // Stop and remove the existing container
     sh "docker stop chatbot || true"
     sh "docker rm chatbot || true"
 }
 
 def deployToContainer() {
+    // Run the Docker container
     sh 'docker run -d --name chatbot -p 3000:3000 chatbot:latest'
 }
