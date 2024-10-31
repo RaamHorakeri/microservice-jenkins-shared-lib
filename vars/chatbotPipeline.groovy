@@ -1,30 +1,49 @@
 def call() {
-    pipeline {
-        agent any
-        stages {
-            stage('Checkout from Git') {
-                steps {
-                    git branch: 'legacy', url: 'https://github.com/Aj7Ay/chatbot-ui.git'
+    stages {
+        stage('Checkout from Git') {
+            steps {
+                script {
+                    checkoutFromGit()
                 }
             }
-            stage("Docker Build") {
-                steps {
-                    script {
-                        sh "docker build -t chatbot:latest ."
-                    }
+        }
+        stage("Docker Build") {
+            steps {
+                script {
+                    buildDockerImage()
                 }
             }
-            stage("Remove container") {
-                steps {
-                    sh "docker stop chatbot || true"
-                    sh "docker rm chatbot || true"
+        }
+        stage("Remove Container") {
+            steps {
+                script {
+                    removeContainer()
                 }
             }
-            stage('Deploy to container') {
-                steps {
-                    sh 'docker run -d --name chatbot -p 3000:3000 chatbot:latest'
+        }
+        stage('Deploy to Container') {
+            steps {
+                script {
+                    deployToContainer()
                 }
             }
         }
     }
+}
+
+def checkoutFromGit() {
+    git branch: 'legacy', url: 'https://github.com/Aj7Ay/chatbot-ui.git'
+}
+
+def buildDockerImage() {
+    sh "docker build -t chatbot:latest ."
+}
+
+def removeContainer() {
+    sh "docker stop chatbot || true"
+    sh "docker rm chatbot || true"
+}
+
+def deployToContainer() {
+    sh 'docker run -d --name chatbot -p 3000:3000 chatbot:latest'
 }
