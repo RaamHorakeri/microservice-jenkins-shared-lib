@@ -1,28 +1,34 @@
-def call() {
-    pipeline {
-        agent any
-        stages {
-            stage('Checkout from Git') {
-                steps {
-                    git branch: 'legacy', url: 'https://github.com/Aj7Ay/chatbot-ui.git'
+// vars/microservicePipeline.groovy
+
+def call(String branch, String gitUrl, String imageName, String containerName, String portMapping) {
+    // Define the stages directly without an enclosing pipeline block
+    stages {
+        stage('Checkout from Git') {
+            steps {
+                script {
+                    git branch: branch, url: gitUrl
                 }
             }
-            stage("Docker Build") {
-                steps {
-                    script {
-                        sh "docker build -t chatbot:latest ."
-                    }
+        }
+        stage("Docker Build") {
+            steps {
+                script {
+                    sh "docker build -t ${imageName}:latest ."
                 }
             }
-            stage("Remove container") {
-                steps {
-                    sh "docker stop chatbot || true"
-                    sh "docker rm chatbot || true"
+        }
+        stage("Remove container") {
+            steps {
+                script {
+                    sh "docker stop ${containerName} || true"
+                    sh "docker rm ${containerName} || true"
                 }
             }
-            stage('Deploy to container') {
-                steps {
-                    sh 'docker run -d --name chatbot -p 3000:3000 chatbot:latest'
+        }
+        stage('Deploy to container') {
+            steps {
+                script {
+                    sh "docker run -d --name ${containerName} -p ${portMapping} ${imageName}:latest"
                 }
             }
         }
